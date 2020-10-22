@@ -263,7 +263,7 @@ Status KMeansDistributedStep2KernelUCAPI<algorithmFPType>::updateClusters(bool i
     args.set(4, static_cast<int32_t>(nFeatures));
 
     auto & deviceInfo = context.getInfoDevice();
-    maxWGSize  = deviceInfo.maxWorkGroupSize;
+    size_t maxWGSize  = deviceInfo.maxWorkGroupSize;
 
     KernelRange local_range(1, nFeatures > maxWGSize ? maxWGSize : nFeatures);
     KernelRange global_range(nClusters, nFeatures);
