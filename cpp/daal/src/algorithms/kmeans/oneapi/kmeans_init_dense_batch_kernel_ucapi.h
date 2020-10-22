@@ -47,6 +47,8 @@ template <Method method, typename algorithmFPType>
 class KMeansInitDenseBatchKernelUCAPI : public Kernel
 {
 public:
+    KMeansInitDenseBatchKernelUCAPI();
+
     services::Status compute(size_t na, const NumericTable * const * a, size_t nr, const NumericTable * const * r, const Parameter * par,
                              engines::BatchBase & engine);
 
@@ -60,6 +62,8 @@ private:
                       services::Status & st);
 
     uint32_t getWorkgroupsCount(uint32_t rows);
+
+    uint32_t _maxWorkItemsPerGroup; // should be a power of two for interal needs
 };
 
 } // namespace internal

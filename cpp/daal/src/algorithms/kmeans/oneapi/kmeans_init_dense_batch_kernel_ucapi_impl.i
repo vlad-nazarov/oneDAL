@@ -49,6 +49,13 @@ using namespace daal::data_management;
 using namespace daal::algorithms::distributions::uniform::internal;
 
 template <Method method, typename algorithmFPType>
+KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::KMeansInitDenseBatchKernelUCAPI() {
+    auto & context        = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo = context.getInfoDevice();
+    _maxWorkItemsPerGroup  = deviceInfo.maxWorkGroupSize;
+}
+
+template <Method method, typename algorithmFPType>
 Status KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::init(size_t p, size_t n, size_t nRowsTotal, size_t nClusters,
                                                                       NumericTable * ntClusters, NumericTable * ntData, unsigned int seed,
                                                                       engines::BatchBase & engine, size_t & clustersFound)
@@ -58,10 +65,8 @@ Status KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::init(size_t p, 
     auto & context        = Environment::getInstance()->getDefaultExecutionContext();
     auto & kernel_factory = context.getClKernelFactory();
 
-    auto & deviceInfo = context.getInfoDevice();
-    const size_t maxWorkItemsPerGroup  = deviceInfo.maxWorkGroupSize;
     char buffer[DAAL_MAX_STRING_SIZE] = { 0 };
-    const auto written                = daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, static_cast<int32_t>(maxWorkItemsPerGroup));
+    const auto written                = daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, static_cast<int32_t>(_maxWorkItemsPerGroup));
     services::String maxWorkItemsPerGroupStr(buffer, written);
     services::String buildOption("-cl-std=CL1.2 -D LOCAL_SUM_SIZE=");
     buildOption.add(maxWorkItemsPerGroupStr);
@@ -172,11 +177,7 @@ services::Status KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::compu
 template <Method method, typename algorithmFPType>
 uint32_t KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::getWorkgroupsCount(uint32_t rows)
 {
-    auto & context = services::internal::getDefaultContext();
-    auto & deviceInfo = context.getInfoDevice();
-    const size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
-
-    const uint32_t elementsPerGroup = maxWorkItemsPerGroup;
+    const uint32_t elementsPerGroup = _maxWorkItemsPerGroup;
     uint32_t workgroupsCount        = rows / elementsPerGroup;
 
     if (workgroupsCount * elementsPerGroup < rows) workgroupsCount++;
@@ -200,11 +201,8 @@ void KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::gatherRandom(Exec
     args.set(4, nClusters);
     args.set(5, nFeatures);
 
-    auto & deviceInfo = context.getInfoDevice();
-    const size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
-
-    KernelRange local_range(1, maxWorkItemsPerGroup);
-    KernelRange global_range(nClusters, maxWorkItemsPerGroup);
+    KernelRange local_range(1, _maxWorkItemsPerGroup);
+    KernelRange global_range(nClusters, _maxWorkItemsPerGroup);
 
     KernelNDRange range(2);
     range.global(global_range, st);

@@ -46,6 +46,8 @@ template <typename algorithmFPType, transform::Method method>
 class TransformKernelOneAPI : public Kernel
 {
 public:
+    TransformKernelOneAPI();
+
     services::Status compute(data_management::NumericTable & data, data_management::NumericTable & eigenvectors,
                              data_management::NumericTable * pMeans, data_management::NumericTable * pVariances,
                              data_management::NumericTable * pEigenvalues, data_management::NumericTable & transformedData);
@@ -86,7 +88,7 @@ private:
                                  const uint32_t numFeatures, const uint32_t numComponents, const uint32_t numVectors);
 
 private:
-    const unsigned int maxWorkItemsPerGroup = 256;
+    unsigned int maxWorkItemsPerGroup;
     daal::services::internal::sycl::UniversalBuffer invSigmas;
     daal::services::internal::sycl::UniversalBuffer invEigenvalues;
     daal::services::internal::sycl::UniversalBuffer rawMeans;

@@ -62,6 +62,8 @@ template <typename algorithmFPType>
 class KMeansDenseLloydKernelBaseUCAPI : public Kernel
 {
 protected:
+    KMeansDenseLloydKernelBaseUCAPI();
+
     services::Status computeSquares(const services::internal::Buffer<algorithmFPType> & data, services::internal::sycl::UniversalBuffer & dataSq,
                                     uint32_t nRows, uint32_t nFeatures);
 
@@ -108,7 +110,7 @@ protected:
     services::internal::sycl::UniversalBuffer _partialCentroidsCounters;
     services::internal::sycl::UniversalBuffer _numEmptyClusters;
 
-    const uint32_t _maxWorkItemsPerGroup = 128;                                          // should be a power of two for interal needs
+    uint32_t _maxWorkItemsPerGroup;                                                      // should be a power of two for interal needs
     const uint32_t _maxLocalBuffer       = 30000;                                        // should be less than a half of local memory (two buffers)
     const uint32_t _preferableSubGroup   = 16;                                           // preferable maximal sub-group size
     const uint32_t _nPartialCentroids    = 128;                                          // Recommended number of partial centroids
