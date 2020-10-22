@@ -58,9 +58,17 @@ Status KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::init(size_t p, 
     auto & context        = Environment::getInstance()->getDefaultExecutionContext();
     auto & kernel_factory = context.getClKernelFactory();
 
+    auto & deviceInfo = context.getInfoDevice();
+    const size_t maxWorkItemsPerGroup  = deviceInfo.maxWorkGroupSize;
+    char buffer[DAAL_MAX_STRING_SIZE] = { 0 };
+    const auto written                = daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, static_cast<int32_t>(maxWorkItemsPerGroup));
+    services::String maxWorkItemsPerGroupStr(buffer, written);
+    services::String buildOption("-cl-std=CL1.2 -D LOCAL_SUM_SIZE=");
+    buildOption.add(maxWorkItemsPerGroupStr);
+
     auto fptype_name   = services::internal::sycl::getKeyFPType<algorithmFPType>();
     auto build_options = fptype_name;
-    build_options.add("-cl-std=CL1.2 -D LOCAL_SUM_SIZE=256"); // should be equal to _maxWorkitemsPerGroup
+    build_options.add(buildOption.c_str()); // should be equal to maxWorkitemsPerGroup
 
     services::String cachekey("__daal_algorithms_kmeans_init_dense_batch_");
     cachekey.add(fptype_name);
@@ -164,7 +172,11 @@ services::Status KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::compu
 template <Method method, typename algorithmFPType>
 uint32_t KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::getWorkgroupsCount(uint32_t rows)
 {
-    const uint32_t elementsPerGroup = _maxWorkItemsPerGroup;
+    auto & context = services::internal::getDefaultContext();
+    auto & deviceInfo = context.getInfoDevice();
+    const size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
+    const uint32_t elementsPerGroup = maxWorkItemsPerGroup;
     uint32_t workgroupsCount        = rows / elementsPerGroup;
 
     if (workgroupsCount * elementsPerGroup < rows) workgroupsCount++;
@@ -188,8 +200,11 @@ void KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::gatherRandom(Exec
     args.set(4, nClusters);
     args.set(5, nFeatures);
 
-    KernelRange local_range(1, _maxWorkItemsPerGroup);
-    KernelRange global_range(nClusters, _maxWorkItemsPerGroup);
+    auto & deviceInfo = context.getInfoDevice();
+    const size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
+    KernelRange local_range(1, maxWorkItemsPerGroup);
+    KernelRange global_range(nClusters, maxWorkItemsPerGroup);
 
     KernelNDRange range(2);
     range.global(global_range, st);

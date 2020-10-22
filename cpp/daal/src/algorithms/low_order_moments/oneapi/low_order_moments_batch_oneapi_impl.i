@@ -187,6 +187,9 @@ LowOrderMomentsBatchTaskOneAPI<algorithmFPType, scope>::LowOrderMomentsBatchTask
     nVectors  = dataTable->getNumberOfRows();
     nFeatures = dataTable->getNumberOfColumns();
 
+    auto & deviceInfo = context.getInfoDevice();
+    const size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
     nColsBlocks = (nFeatures + maxWorkItemsPerGroup - 1) / maxWorkItemsPerGroup;
 
     nRowsBlocks = 128;

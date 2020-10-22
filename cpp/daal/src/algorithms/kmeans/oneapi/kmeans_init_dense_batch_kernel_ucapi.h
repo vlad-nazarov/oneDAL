@@ -60,8 +60,6 @@ private:
                       services::Status & st);
 
     uint32_t getWorkgroupsCount(uint32_t rows);
-
-    const uint32_t _maxWorkItemsPerGroup = 256; // should be a power of two for interal needs
 };
 
 } // namespace internal

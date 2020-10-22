@@ -146,7 +146,6 @@ private:
     unsigned int nVectors;
     unsigned int nFeatures;
 
-    const unsigned int maxWorkItemsPerGroup        = 256;
     const unsigned int maxWorkItemsPerGroupToMerge = 16;
 
     unsigned int nRowsBlocks;
