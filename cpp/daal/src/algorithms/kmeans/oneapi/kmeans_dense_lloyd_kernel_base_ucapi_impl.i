@@ -55,6 +55,7 @@ KMeansDenseLloydKernelBaseUCAPI<algorithmFPType>::KMeansDenseLloydKernelBaseUCAP
     auto & context        = Environment::getInstance()->getDefaultExecutionContext();
     auto & deviceInfo     = context.getInfoDevice();
     _maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+    _preferableSubGroup   = deviceInfo.maxNumSubGroups;
 }
 
 template <typename algorithmFPType>

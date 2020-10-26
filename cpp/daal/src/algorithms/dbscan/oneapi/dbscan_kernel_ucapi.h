@@ -40,6 +40,8 @@ template <typename algorithmFPType>
 class DBSCANBatchKernelUCAPI : public Kernel
 {
 public:
+    DBSCANBatchKernelUCAPI();
+
     services::Status compute(const daal::data_management::NumericTable * ntData, const daal::data_management::NumericTable * ntWeights,
                              daal::data_management::NumericTable * ntAssignments, daal::data_management::NumericTable * ntNClusters,
                              daal::data_management::NumericTable * ntCoreIndices, daal::data_management::NumericTable * ntCoreObservations,
@@ -63,7 +65,7 @@ private:
     services::Status setQueueFront(uint32_t queueEnd);
     services::Status getQueueFront(uint32_t & queueEnd);
 
-    static constexpr uint32_t _maxSubgroupSize = 32;
+    uint32_t _maxSubgroupSize;
     bool _useWeights;
 
     services::internal::sycl::UniversalBuffer _weights;

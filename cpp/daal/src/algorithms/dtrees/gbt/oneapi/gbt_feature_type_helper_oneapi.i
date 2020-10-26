@@ -271,10 +271,12 @@ services::Status IndexedFeaturesOneAPI<algorithmFPType>::computeBins(UniversalBu
 {
     services::Status status;
 
-    auto & context = services::internal::getDefaultContext();
+    auto & context     = services::internal::getDefaultContext();
+    auto & deviceInfo  = context.getInfoDevice();
+    preferableSubGroup = deviceInfo.maxNumSubGroups;
 
     const uint32_t maxBins      = pBinPrm->maxBins < nRows ? pBinPrm->maxBins : nRows;
-    const uint32_t localSize    = _preferableSubGroup;
+    const uint32_t localSize    = preferableSubGroup;
     const uint32_t nLocalBlocks = 1024 * localSize < nRows ? 1024 : (nRows / localSize) + !!(nRows % localSize);
 
     auto binOffsets = context.allocate(TypeIds::id<int>(), maxBins, status);

@@ -104,7 +104,14 @@ services::Status SVMTrainOneAPI<algorithmFPType, thunder>::smoKernel(
     DAAL_ASSERT(nWS <= static_cast<size_t>(services::internal::MaxVal<int>::get()));
     services::daal_int_to_string(bufferString, DAAL_MAX_STRING_SIZE, static_cast<int>(nWS));
     build_options.add(bufferString);
-    build_options.add(" -D SIMD_WIDTH=64 ");
+    build_options.add(" -D SIMD_WIDTH=");
+
+    auto & deviceInfo      = context.getInfoDevice();
+    size_t maxSubgroupSize = deviceInfo.maxNumSubGroups;
+
+    services::daal_int_to_string(bufferString, DAAL_MAX_STRING_SIZE, static_cast<int>(maxSubgroupSize));
+    build_options.add(bufferString);
+
     cachekey.add(build_options);
 
     services::Status status;

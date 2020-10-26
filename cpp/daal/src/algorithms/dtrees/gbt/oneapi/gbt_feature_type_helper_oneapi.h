@@ -134,7 +134,6 @@ protected:
 
     const uint32_t _maxWorkItemsPerGroup = 128;   // should be a power of two for interal needs
     const uint32_t _maxLocalBuffer       = 30000; // should be less than a half of local memory (two buffers)
-    const uint32_t _preferableSubGroup   = 16;    // preferable maximal sub-group size
     const uint32_t _radixBits            = 4;
 };
 

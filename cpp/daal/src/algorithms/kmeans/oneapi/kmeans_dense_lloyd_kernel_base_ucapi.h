@@ -111,8 +111,8 @@ protected:
     services::internal::sycl::UniversalBuffer _numEmptyClusters;
 
     uint32_t _maxWorkItemsPerGroup;                                                    // should be a power of two for interal needs
+    uint32_t _preferableSubGroup;                                           // preferable maximal sub-group size
     const uint32_t _maxLocalBuffer     = 30000;                                        // should be less than a half of local memory (two buffers)
-    const uint32_t _preferableSubGroup = 16;                                           // preferable maximal sub-group size
     const uint32_t _nPartialCentroids  = 128;                                          // Recommended number of partial centroids
     const uint32_t _nValuesInBlock     = 1024 * 1024 * 1024 / sizeof(algorithmFPType); // Max block size is 1GB
     const uint32_t _nMinRows           = 1;                                            // At least a single row should fit into block

@@ -76,6 +76,14 @@ static services::Status buildProgram(ClKernelFactoryIface & factory)
 }
 
 template <typename algorithmFPType, gbt::regression::training::Method method>
+RegressionTrainBatchKernelOneAPI<algorithmFPType, method>::RegressionTrainBatchKernelOneAPI()
+{
+    auto & context      = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo   = context.getInfoDevice();
+    _preferableSubGroup = deviceInfo.maxNumSubGroups;
+}
+
+template <typename algorithmFPType, gbt::regression::training::Method method>
 services::Status RegressionTrainBatchKernelOneAPI<algorithmFPType, method>::scan(const services::internal::Buffer<algorithmFPType> & values,
                                                                                  UniversalBuffer & partialSums, uint32_t nRows, uint32_t localSize,
                                                                                  uint32_t nLocalSums)

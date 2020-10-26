@@ -43,6 +43,14 @@ namespace dbscan
 namespace internal
 {
 template <typename algorithmFPType>
+DBSCANBatchKernelUCAPI<algorithmFPType>::DBSCANBatchKernelUCAPI()
+{
+    auto & context    = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo = context.getInfoDevice();
+    _maxSubgroupSize  = deviceInfo.maxNumSubGroups;
+}
+
+template <typename algorithmFPType>
 services::Status DBSCANBatchKernelUCAPI<algorithmFPType>::initializeBuffers(uint32_t nRows, NumericTable * weights)
 {
     Status s;

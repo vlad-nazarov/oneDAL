@@ -52,6 +52,8 @@ template <typename algorithmFPType, Method method>
 class RegressionTrainBatchKernelOneAPI : public daal::algorithms::Kernel
 {
 public:
+    RegressionTrainBatchKernelOneAPI();
+
     services::Status compute(HostAppIface * pHostApp, const NumericTable * x, const NumericTable * y, gbt::regression::Model & m, Result & res,
                              const Parameter & par, engines::internal::BatchBaseImpl & engine);
 
@@ -146,9 +148,9 @@ private:
     services::internal::sycl::KernelPtr kernelPartitionCopy;
     services::internal::sycl::KernelPtr kernelUpdateResponse;
 
+    uint32_t _preferableSubGroup;                 // preferable maximal sub-group size
     const uint32_t _maxWorkItemsPerGroup = 128;   // should be a power of two for interal needs
     const uint32_t _maxLocalBuffer       = 30000; // should be less than a half of local memory (two buffers)
-    const uint32_t _preferableSubGroup   = 16;    // preferable maximal sub-group size
     const uint32_t _maxLocalSize         = 128;
     const uint32_t _maxLocalSums         = 256;
     const uint32_t _maxLocalHistograms   = 256;
