@@ -134,7 +134,7 @@ services::Status SGDKernelOneAPI<algorithmFPType, miniBatch>::vectorNorm(const B
     DAAL_CHECK_STATUS_VAR(status);
 
     auto & deviceInfo        = ctx.getInfoDevice();
-    size_t workItemsPerGroup = maxWorkGroupSize;
+    size_t workItemsPerGroup = deviceInfo.maxWorkGroupSize;
     const size_t nWorkGroups = getWorkgroupsCount(n, workItemsPerGroup);
 
     DAAL_OVERFLOW_CHECK_BY_MULTIPLICATION(size_t, workItemsPerGroup, nWorkGroups);
