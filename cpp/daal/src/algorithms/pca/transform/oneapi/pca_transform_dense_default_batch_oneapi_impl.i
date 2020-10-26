@@ -50,6 +50,13 @@ namespace internal
 using namespace daal::services::internal::sycl;
 
 template <typename algorithmFPType, transform::Method method>
+TransformKernelOneAPI<algorithmFPType, method>::TransformKernelOneAPI() {
+    auto & context        = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo = context.getInfoDevice();
+    maxWorkItemsPerGroup  = deviceInfo.maxWorkGroupSize;
+}
+
+template <typename algorithmFPType, transform::Method method>
 services::Status TransformKernelOneAPI<algorithmFPType, method>::computeTransformedBlock(
     const uint32_t numRows, const uint32_t nFeatures, const uint32_t numComponents, UniversalBuffer & dataBlock,
     const services::internal::Buffer<algorithmFPType> & eigenvectors, const services::internal::Buffer<algorithmFPType> & resultBlock)

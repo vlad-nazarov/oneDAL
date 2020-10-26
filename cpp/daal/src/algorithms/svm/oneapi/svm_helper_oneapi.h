@@ -80,7 +80,6 @@ struct HelperSVM
         services::String options = getKeyFPType<algorithmFPType>();
 
         services::String cachekey("__daal_algorithms_svm_");
-        options.add(" -D LOCAL_SUM_SIZE=256 ");
         cachekey.add(options);
 
         services::Status status;

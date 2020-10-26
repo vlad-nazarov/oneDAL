@@ -137,7 +137,6 @@ private:
     uint32_t nVectors;
     uint32_t nFeatures;
 
-    const uint32_t maxWorkItemsPerGroup        = 256;
     const uint32_t maxWorkItemsPerGroupToMerge = 16;
 
     uint32_t nRowsBlocks;

@@ -37,7 +37,15 @@ services::Status Reducer::buildProgram(ClKernelFactoryIface & kernelFactory, con
 {
     services::String fptype_name = getKeyFPType(vectorTypeId);
     auto build_options           = fptype_name;
-    build_options.add(" -cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=256");
+
+    char buffer[4096];
+    auto & context              = services::internal::getDefaultContext();
+    auto & deviceInfo           = context.getInfoDevice();
+    size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
+    build_options.add(" -cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=");
+    daal::services::daal_int_to_string(buffer, 4096, maxWorkItemsPerGroup);
+    build_options.add(buffer);
 
     if (op == BinaryOp::MIN)
     {
@@ -216,7 +224,8 @@ Reducer::Result Reducer::reduce(const BinaryOp op, Layout vectorsLayout, const U
     status |= buildProgram(kernelFactory, op, vectors.type());
     DAAL_CHECK_STATUS_RETURN_IF_FAIL(status, result);
 
-    const uint32_t maxWorkItemsPerGroup = 256;
+    auto & deviceInfo                   = context.getInfoDevice();
+    const uint32_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
     const uint32_t maxNumSubSlices      = 9;
 
     if (vectorsLayout == Layout::RowMajor)

@@ -206,7 +206,14 @@ static inline services::Status buildProgram(ClKernelFactoryIface & factory, cons
     auto fptype_name   = getKeyFPType<algorithmFPType>();
     auto build_options = fptype_name;
 
-    build_options.add(" -cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=256 ");
+    auto & context        = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo = context.getInfoDevice();
+    size_t maxWorkItemsPerGroup  = deviceInfo.maxWorkGroupSize;
+    char buffer[DAAL_MAX_STRING_SIZE];
+
+    build_options.add(" -cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=");
+    daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, maxWorkItemsPerGroup);
+    buildOptions.add(buffer);
     build_options.add(TaskInfoOnline<algorithmFPType, scope>::kBldOptFNameSuff);
     build_options.add(TaskInfoOnline<algorithmFPType, scope>::kBldOptScope);
 
@@ -245,6 +252,9 @@ LowOrderMomentsOnlineTaskOneAPI<algorithmFPType, scope>::LowOrderMomentsOnlineTa
 
     nVectors  = static_cast<uint32_t>(dataTable->getNumberOfRows());
     nFeatures = static_cast<uint32_t>(dataTable->getNumberOfColumns());
+
+    auto & deviceInfo                 = context.getInfoDevice();
+    const size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
 
     nColsBlocks = (nFeatures + maxWorkItemsPerGroup - 1) / maxWorkItemsPerGroup;
 

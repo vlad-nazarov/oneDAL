@@ -251,7 +251,8 @@ services::Status LogLossKernelOneAPI<algorithmFPType, defaultDense>::hessianInte
 
         KernelNDRange range(1);
 
-        size_t workItemsPerGroup = 256;
+        auto & deviceInfo        = ctx.getInfoDevice();
+        size_t workItemsPerGroup = maxWorkGroupSize;
 
         const size_t nWorkGroups = HelperObjectiveFunction::getWorkgroupsCount(n, workItemsPerGroup);
 
@@ -324,13 +325,20 @@ services::Status LogLossKernelOneAPI<algorithmFPType, defaultDense>::buildProgra
 {
     DAAL_ITTNOTIFY_SCOPED_TASK(buildProgram);
 
+    char buffer[DAAL_MAX_STRING_SIZE];
     services::Status status;
     services::String options = getKeyFPType<algorithmFPType>();
 
     services::String cachekey("__daal_algorithms_optimization_solver_logistic_loss_");
     cachekey.add(options);
 
-    options.add(" -D LOCAL_SUM_SIZE=256 ");
+    auto & context              = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo           = context.getInfoDevice();
+    size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
+    options.add(" -D LOCAL_SUM_SIZE=");
+    daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, maxWorkItemsPerGroup);
+    options.add(buffer);
 
     factory.build(ExecutionTargetIds::device, cachekey.c_str(), clKernelLogLoss, options.c_str(), status);
     return status;

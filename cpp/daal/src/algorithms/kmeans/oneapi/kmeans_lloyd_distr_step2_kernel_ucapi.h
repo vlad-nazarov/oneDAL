@@ -52,7 +52,6 @@ public:
                                       const services::internal::Buffer<int> & candidates, const services::internal::Buffer<algorithmFPType> & cValues,
                                       uint32_t nClusters);
     services::Status buildProgram(services::internal::sycl::ClKernelFactoryIface & kernelFactory);
-    uint32_t _maxWGSize = 256;
 };
 
 } // namespace internal

@@ -133,7 +133,8 @@ services::Status SGDKernelOneAPI<algorithmFPType, miniBatch>::vectorNorm(const B
     KernelPtr kernel              = factory.getKernel(kernelName, status);
     DAAL_CHECK_STATUS_VAR(status);
 
-    size_t workItemsPerGroup = 256;
+    auto & deviceInfo        = ctx.getInfoDevice();
+    size_t workItemsPerGroup = maxWorkGroupSize;
     const size_t nWorkGroups = getWorkgroupsCount(n, workItemsPerGroup);
 
     DAAL_OVERFLOW_CHECK_BY_MULTIPLICATION(size_t, workItemsPerGroup, nWorkGroups);
@@ -178,12 +179,20 @@ template <typename algorithmFPType>
 services::Status SGDKernelOneAPI<algorithmFPType, miniBatch>::buildProgram(ClKernelFactoryIface & factory)
 {
     DAAL_ITTNOTIFY_SCOPED_TASK(buildProgram);
+    char buffer[DAAL_MAX_STRING_SIZE];
     services::Status status;
     services::String options = getKeyFPType<algorithmFPType>();
 
     services::String cachekey("__daal_algorithms_optimization_solver_sgd_");
     cachekey.add(options);
-    options.add(" -D LOCAL_SUM_SIZE=256 ");
+
+    auto & context              = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo           = context.getInfoDevice();
+    size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
+    options.add(" -D LOCAL_SUM_SIZE=");
+    daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, maxWorkItemsPerGroup);
+    options.add(buffer);
 
     factory.build(ExecutionTargetIds::device, cachekey.c_str(), clKernelSGDMiniBatch, options.c_str(), status);
     DAAL_CHECK_STATUS_VAR(status);

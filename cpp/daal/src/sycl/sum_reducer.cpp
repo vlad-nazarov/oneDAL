@@ -36,9 +36,16 @@ services::Status buildProgram(ClKernelFactoryIface & kernelFactory, const TypeId
 {
     services::Status status;
 
+    char buffer[4096];
+    auto & context              = services::internal::getDefaultContext();
+    auto & deviceInfo           = context.getInfoDevice();
+    size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
     services::String fptype_name = getKeyFPType(vectorTypeId);
     auto build_options           = fptype_name;
-    build_options.add("-cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=256");
+    build_options.add("-cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=");
+    daal::services::daal_int_to_string(buffer, 4096, maxWorkItemsPerGroup);
+    build_options.add(buffer);
 
     services::String cachekey("__daal_oneapi_internal_math_sum_reducer_");
     cachekey.add(build_options);
@@ -204,8 +211,9 @@ SumReducer::Result SumReducer::sum(Layout vectorsLayout, const UniversalBuffer &
 
     DAAL_ASSERT(vectors.type() == TypeIds::id<float>() || vectors.type() == TypeIds::id<double>());
 
-    const uint32_t maxWorkItemsPerGroup = 256;
-    const uint32_t maxNumSubSlices      = 9;
+    auto & deviceInfo              = context.getInfoDevice();
+    size_t maxWorkItemsPerGroup    = deviceInfo.maxWorkGroupSize;
+    const uint32_t maxNumSubSlices = 9;
 
     Result result(context, nVectors, vectors.type(), status);
     DAAL_CHECK_STATUS_RETURN_IF_FAIL(status, result);

@@ -50,6 +50,14 @@ namespace kmeans
 namespace internal
 {
 template <typename algorithmFPType>
+KMeansDenseLloydKernelBaseUCAPI<algorithmFPType>::KMeansDenseLloydKernelBaseUCAPI()
+{
+    auto & context        = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo     = context.getInfoDevice();
+    _maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+}
+
+template <typename algorithmFPType>
 Status KMeansDenseLloydKernelBaseUCAPI<algorithmFPType>::initializeBuffers(uint32_t nClusters, uint32_t nFeatures, uint32_t blockSize)
 {
     DAAL_ASSERT(_nPartialCentroids <= maxInt32AsUint32T);

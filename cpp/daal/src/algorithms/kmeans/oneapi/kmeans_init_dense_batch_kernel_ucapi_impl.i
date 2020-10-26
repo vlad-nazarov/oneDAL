@@ -49,6 +49,14 @@ using namespace daal::services::internal::sycl;
 using namespace daal::data_management;
 using namespace daal::algorithms::distributions::uniform::internal;
 
+template <Method method, typename algorithmFPType>
+KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::KMeansInitDenseBatchKernelUCAPI()
+{
+    auto & context        = Environment::getInstance()->getDefaultExecutionContext();
+    auto & deviceInfo     = context.getInfoDevice();
+    _maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+}
+
 constexpr uint32_t maxInt32AsUint32T = static_cast<uint32_t>(daal::services::internal::MaxVal<int32_t>::get());
 constexpr size_t maxInt32AsSizeT     = static_cast<size_t>(daal::services::internal::MaxVal<int32_t>::get());
 
@@ -217,8 +225,11 @@ template <Method method, typename algorithmFPType>
 Status KMeansInitDenseBatchKernelUCAPI<method, algorithmFPType>::buildProgram(ClKernelFactoryIface & kernelFactory)
 {
     auto fptypeName   = services::internal::sycl::getKeyFPType<algorithmFPType>();
+    char buffer[DAAL_MAX_STRING_SIZE];
     auto buildOptions = fptypeName;
-    buildOptions.add("-cl-std=CL1.2 -D LOCAL_SUM_SIZE=256"); // should be not less than _maxWorkitemsPerGroup
+    buildOptions.add("-cl-std=CL1.2 -D LOCAL_SUM_SIZE="); // should be not less than _maxWorkitemsPerGroup
+    daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, _maxWorkItemsPerGroup);
+    buildOptions.add(buffer);
 
     services::String cachekey("__daal_algorithms_kmeans_init_dense_batch_");
     cachekey.add(fptypeName);

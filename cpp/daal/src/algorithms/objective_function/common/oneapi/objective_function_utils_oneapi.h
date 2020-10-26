@@ -235,7 +235,8 @@ struct HelperObjectiveFunction
 
         services::internal::sycl::KernelNDRange range(1);
 
-        size_t workItemsPerGroup = 256;
+        auto & deviceInfo        = ctx.getInfoDevice();
+        size_t workItemsPerGroup = maxWorkGroupSize;
 
         const size_t nWorkGroups = getWorkgroupsCount(n, workItemsPerGroup);
 
@@ -289,7 +290,8 @@ struct HelperObjectiveFunction
 
         services::internal::sycl::KernelNDRange range(1);
 
-        size_t workItemsPerGroup = 256;
+        auto & deviceInfo        = ctx.getInfoDevice();
+        size_t workItemsPerGroup = maxWorkGroupSize;
 
         const size_t nWorkGroups = getWorkgroupsCount(n, workItemsPerGroup);
 
@@ -435,13 +437,20 @@ struct HelperObjectiveFunction
 private:
     static services::Status buildProgram(services::internal::sycl::ClKernelFactoryIface & factory)
     {
+        char buffer[DAAL_MAX_STRING_SIZE];
         services::Status status;
         services::String options = services::internal::sycl::getKeyFPType<algorithmFPType>();
 
         services::String cachekey("__daal_algorithms_optimization_solver_objective_function_");
         cachekey.add(options);
 
-        options.add(" -D LOCAL_SUM_SIZE=256 "); //depends on workItemsPerGroup value
+        auto & context              = Environment::getInstance()->getDefaultExecutionContext();
+        auto & deviceInfo           = context.getInfoDevice();
+        size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
+
+        options.add(" -D LOCAL_SUM_SIZE="); //depends on workItemsPerGroup value
+        daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, maxWorkItemsPerGroup);
+        options.add(buffer);
 
         factory.build(services::internal::sycl::ExecutionTargetIds::device, cachekey.c_str(), clKernelObjectiveFunction, options.c_str(), status);
         DAAL_CHECK_STATUS_VAR(status);
