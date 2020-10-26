@@ -332,7 +332,7 @@ services::Status LogLossKernelOneAPI<algorithmFPType, defaultDense>::buildProgra
     services::String cachekey("__daal_algorithms_optimization_solver_logistic_loss_");
     cachekey.add(options);
 
-    auto & context              = Environment::getInstance()->getDefaultExecutionContext();
+    auto & context              = services::internal::getDefaultContext();
     auto & deviceInfo           = context.getInfoDevice();
     size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
 

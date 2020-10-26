@@ -186,7 +186,7 @@ services::Status SGDKernelOneAPI<algorithmFPType, miniBatch>::buildProgram(ClKer
     services::String cachekey("__daal_algorithms_optimization_solver_sgd_");
     cachekey.add(options);
 
-    auto & context              = Environment::getInstance()->getDefaultExecutionContext();
+    auto & context              = services::internal::getDefaultContext();
     auto & deviceInfo           = context.getInfoDevice();
     size_t maxWorkItemsPerGroup = deviceInfo.maxWorkGroupSize;
 
