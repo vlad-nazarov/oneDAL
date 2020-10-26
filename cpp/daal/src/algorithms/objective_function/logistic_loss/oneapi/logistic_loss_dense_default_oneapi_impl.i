@@ -252,7 +252,7 @@ services::Status LogLossKernelOneAPI<algorithmFPType, defaultDense>::hessianInte
         KernelNDRange range(1);
 
         auto & deviceInfo        = ctx.getInfoDevice();
-        size_t workItemsPerGroup = maxWorkGroupSize;
+        size_t workItemsPerGroup = deviceInfo.maxWorkGroupSize;
 
         const size_t nWorkGroups = HelperObjectiveFunction::getWorkgroupsCount(n, workItemsPerGroup);
 

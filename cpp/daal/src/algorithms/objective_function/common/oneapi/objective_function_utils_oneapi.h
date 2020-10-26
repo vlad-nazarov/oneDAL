@@ -236,7 +236,7 @@ struct HelperObjectiveFunction
         services::internal::sycl::KernelNDRange range(1);
 
         auto & deviceInfo        = ctx.getInfoDevice();
-        size_t workItemsPerGroup = maxWorkGroupSize;
+        size_t workItemsPerGroup = deviceInfo.maxWorkGroupSize;
 
         const size_t nWorkGroups = getWorkgroupsCount(n, workItemsPerGroup);
 
@@ -291,7 +291,7 @@ struct HelperObjectiveFunction
         services::internal::sycl::KernelNDRange range(1);
 
         auto & deviceInfo        = ctx.getInfoDevice();
-        size_t workItemsPerGroup = maxWorkGroupSize;
+        size_t workItemsPerGroup = deviceInfo.maxWorkGroupSize;
 
         const size_t nWorkGroups = getWorkgroupsCount(n, workItemsPerGroup);
 

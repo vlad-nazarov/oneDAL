@@ -213,7 +213,7 @@ static inline services::Status buildProgram(ClKernelFactoryIface & factory, cons
 
     build_options.add(" -cl-std=CL1.2 -D LOCAL_BUFFER_SIZE=");
     daal::services::daal_int_to_string(buffer, DAAL_MAX_STRING_SIZE, maxWorkItemsPerGroup);
-    buildOptions.add(buffer);
+    build_options.add(buffer);
     build_options.add(TaskInfoOnline<algorithmFPType, scope>::kBldOptFNameSuff);
     build_options.add(TaskInfoOnline<algorithmFPType, scope>::kBldOptScope);
 
