@@ -273,7 +273,7 @@ services::Status IndexedFeaturesOneAPI<algorithmFPType>::computeBins(UniversalBu
 
     auto & context     = services::internal::getDefaultContext();
     auto & deviceInfo  = context.getInfoDevice();
-    preferableSubGroup = deviceInfo.maxNumSubGroups;
+    size_t preferableSubGroup = deviceInfo.maxNumSubGroups;
 
     const uint32_t maxBins      = pBinPrm->maxBins < nRows ? pBinPrm->maxBins : nRows;
     const uint32_t localSize    = preferableSubGroup;
