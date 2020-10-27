@@ -219,8 +219,11 @@ services::Status Partition::flagged(UniversalBuffer mask, UniversalBuffer data, 
 
     buildProgram(factory, data.type());
 
-    const uint32_t subSize       = _preferableSubGroup;
-    const uint32_t localSize     = _preferableSubGroup;
+    auto & deviceInfo = context.getInfoDevice();
+    size_t preferableSubGroup  = deviceInfo.maxNumSubGroups;
+
+    const uint32_t subSize       = preferableSubGroup;
+    const uint32_t localSize     = preferableSubGroup;
     const uint32_t nLocalSums    = _maxLocalSums * localSize < nElems ? _maxLocalSums : (nElems / localSize) + !!(nElems % localSize);
     const uint32_t nSubgroupSums = nLocalSums * (localSize / subSize);
 
@@ -257,8 +260,11 @@ services::Status Partition::flaggedIndex(UniversalBuffer mask, UniversalBuffer d
 
     buildProgram(factory, data.type());
 
-    const uint32_t subSize       = _preferableSubGroup;
-    const uint32_t localSize     = _preferableSubGroup;
+    auto & deviceInfo = context.getInfoDevice();
+    size_t preferableSubGroup  = deviceInfo.maxNumSubGroups;
+
+    const uint32_t subSize       = preferableSubGroup;
+    const uint32_t localSize     = preferableSubGroup;
     const uint32_t nLocalSums    = _maxLocalSums * localSize < nElems ? _maxLocalSums : (nElems / localSize) + !!(nElems % localSize);
     const uint32_t nSubgroupSums = nLocalSums * (localSize / subSize);
 

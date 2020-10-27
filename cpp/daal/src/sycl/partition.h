@@ -60,7 +60,6 @@ private:
     static services::Status buildProgram(ClKernelFactoryIface & factory, const TypeId & vectorTypeId);
 
 private:
-    static const uint32_t _preferableSubGroup = 16; // preferable maximal sub-group size
     static const uint32_t _maxLocalSums       = 256;
 };
 
