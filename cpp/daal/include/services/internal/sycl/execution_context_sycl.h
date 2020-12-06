@@ -33,6 +33,8 @@
 #include "services/internal/sycl/math/blas_executor.h"
 #include "services/internal/sycl/math/lapack_executor.h"
 
+#include <iostream>
+
 /// \cond INTERNAL
 namespace daal
 {
@@ -55,6 +57,8 @@ public:
     {
         DAAL_ASSERT(name);
         DAAL_ASSERT(program);
+
+        std::cout << "Building GPU kernels: " << name << std::endl;
 
         String key = name;
         DAAL_CHECK_COND_ERROR(key.c_str(), status, ErrorMemoryAllocationFailed);
