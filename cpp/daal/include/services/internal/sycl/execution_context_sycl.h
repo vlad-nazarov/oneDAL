@@ -22,6 +22,7 @@
     #error "DAAL_SYCL_INTERFACE must be defined to include this file"
 #endif
 
+#include <iostream>
 #include <CL/cl.h>
 #include <CL/sycl.hpp>
 
@@ -53,6 +54,7 @@ public:
 
     void build(ExecutionTargetId target, const char * name, const char * program, const char * options, Status & status) DAAL_C11_OVERRIDE
     {
+        std::cout << "Building GPU kernels: " << name << std::endl;
         DAAL_ASSERT(name);
         DAAL_ASSERT(program);
 
