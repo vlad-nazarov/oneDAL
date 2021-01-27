@@ -258,6 +258,7 @@ services::Status SVMTrainOneAPI<algorithmFPType, thunder>::compute(const Numeric
         if (checkStopCondition(diff, diffPrev, eps, sameLocalDiff)) break;
         diffPrev = diff;
     }
+    printf("Iteration number: %zu\n", iter);
     SaveResultModel<algorithmFPType> result(alphaBuff, gradBuff, yBuff, C, nVectors);
 
     DAAL_CHECK_STATUS(status, result.init());
