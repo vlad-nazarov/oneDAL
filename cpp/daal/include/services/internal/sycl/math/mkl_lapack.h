@@ -57,6 +57,7 @@ struct MKLPotrf
         const auto uplomkl                       = to_fpk_uplo(uplo);
         const std::int64_t minimalScratchpadSize = ::oneapi::fpk::lapack::potrf_scratchpad_size<algorithmFPType>(_queue, uplomkl, n, lda);
         return this->operator()(uplo, n, a, lda, minimalScratchpadSize);
+        printf("60 LINE POTRF\n");
     }
 
 private:
@@ -65,9 +66,11 @@ private:
         using namespace daal::services;
 
         Status status;
+        printf("69 LINE POTRF\n");
         const auto uplomkl = to_fpk_uplo(uplo);
 
 #ifdef DAAL_SYCL_INTERFACE_USM
+        printf("73 LINE POTRF\n");
         auto a_usm = a.toUSM(_queue, data_management::readWrite, status);
         DAAL_CHECK_STATUS_VAR(status);
 
@@ -78,10 +81,13 @@ private:
             if (scratchpad == nullptr) return ErrorMemoryAllocationFailed;
         }
 
+        printf("84 LINE POTRF\n");
+        printf("POTRF PARAMS n = %u, lda = %u, scratchpadSize = %u\n", n, lda, static_cast<size_t>(scratchpadSize));
         status |= catchSyclExceptions([&]() mutable {
             ::oneapi::fpk::lapack::potrf(_queue, uplomkl, n, a_usm.get(), lda, scratchpad, scratchpadSize);
             _queue.wait_and_throw();
         });
+        printf("89 LINE POTRF\n");
 
         if (scratchpadSize > 0) cl::sycl::free(scratchpad, _queue);
 
