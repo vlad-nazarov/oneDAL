@@ -83,11 +83,15 @@ private:
 
         printf("84 LINE POTRF\n");
         printf("POTRF PARAMS n = %u, lda = %u, scratchpadSize = %u\n", n, lda, static_cast<size_t>(scratchpadSize));
+        printf("BUFFER: \n")
+        auto buf = a_usm.get();
+        for (size_t i = 0; i < n; i++)
+            printf("%f ", buf[i]);
         status |= catchSyclExceptions([&]() mutable {
             ::oneapi::fpk::lapack::potrf(_queue, uplomkl, n, a_usm.get(), lda, scratchpad, scratchpadSize);
             _queue.wait_and_throw();
         });
-        printf("89 LINE POTRF\n");
+        printf("\n89 LINE POTRF\n");
 
         if (scratchpadSize > 0) cl::sycl::free(scratchpad, _queue);
 
