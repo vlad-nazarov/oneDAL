@@ -46,6 +46,11 @@ public:
         return get_policy().is_gpu();
     }
 
+    bool not_float64_friendly() {
+        constexpr bool is_double = std::is_same_v<Float, double>;
+        return is_double && !this->get_policy().has_native_float64();
+    }
+
     void check_linear_kernel(
         const table& train_data,
         const table& train_labels,
@@ -239,6 +244,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "[svm][integration][batch][linear]",
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
@@ -295,6 +301,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "[svm][integration][batch][linear]",
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
@@ -352,6 +359,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "[svm][integration][batch][linear]",
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
@@ -408,6 +416,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "[svm][integration][batch][rbf]",
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
@@ -456,6 +465,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "[svm][integration][batch][linear]",
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
@@ -505,6 +515,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm can classify linear separable surface with weights",
                      "[svm][integration][batch][linear]",
                      svm_types) {
+    SKIP_IF(this->not_float64_friendly());
     SKIP_IF(this->weights_not_available_on_device());
 
     using float_t = std::tuple_element_t<0, TestType>;

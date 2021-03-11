@@ -38,6 +38,11 @@ public:
         return get_policy().is_gpu() && is_svd;
     }
 
+    bool not_float64_friendly() {
+        constexpr bool is_double = std::is_same_v<Float, double>;
+        return is_double && !this->get_policy().has_native_float64();
+    }
+
     auto get_descriptor(std::int64_t component_count) const {
         return pca::descriptor<Float, Method>{}
             .set_component_count(component_count)
@@ -182,6 +187,7 @@ using pca_types = COMBINE_TYPES((float, double), (pca::method::cov, pca::method:
 
 TEMPLATE_LIST_TEST_M(pca_batch_test, "pca common flow", "[pca][integration][batch]", pca_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     const te::dataframe data =
         GENERATE_DATAFRAME(te::dataframe_builder{ 100, 10 }.fill_uniform(0.2, 0.5),
@@ -204,6 +210,7 @@ TEMPLATE_LIST_TEST_M(pca_batch_test,
                      "[external-dataset][pca][integration][batch]",
                      pca_types) {
     SKIP_IF(this->not_available_on_device());
+    SKIP_IF(this->not_float64_friendly());
 
     const std::int64_t component_count = 0;
     const te::dataframe data =
