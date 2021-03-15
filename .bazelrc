@@ -27,7 +27,7 @@ test --test_env=OverrideDefaultFP64Settings \
      --test_env=IGC_EnableDPEmulation
 
 # Flag for setting the test timeout to 15 minutes
-test --test_timeout=900
+test --test_timeout=15000
 
 # Configuration: 'public'
 # Build & run all tests for public interface
