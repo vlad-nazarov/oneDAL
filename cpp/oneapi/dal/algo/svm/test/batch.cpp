@@ -649,7 +649,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
     SKIP_IF(this->not_float64_friendly());
-                    
+
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = linear::descriptor<float_t, linear::method::dense>;
@@ -750,7 +750,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm rbf epsilon 16k x 2k",
                      "[svm][integration][batch][rbf][nightly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = rbf::descriptor<float_t, rbf::method::dense>;
@@ -783,7 +783,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm linear higgs 100k x 28",
                      "[svm][integration][batch][linear][nightly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = linear::descriptor<float_t, linear::method::dense>;
@@ -815,7 +815,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm linear epsilon 80k x 2k",
                      "[svm][integration][batch][linear][weekly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = linear::descriptor<float_t, linear::method::dense>;
@@ -847,7 +847,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm linear cifar 50k x 3072",
                      "[svm][integration][batch][linear][nightly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = linear::descriptor<float_t, linear::method::dense>;
@@ -879,7 +879,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm linear imdb_drama 121k x 1001",
                      "[svm][integration][batch][linear][nightly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = linear::descriptor<float_t, linear::method::dense>;
@@ -911,7 +911,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm rbf epsilon 50k x 2k",
                      "[svm][integration][batch][rbf][weekly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = rbf::descriptor<float_t, rbf::method::dense>;
@@ -944,7 +944,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm rbf imdb_drama 121k x 1001",
                      "[svm][integration][batch][rbf][nightly][external-dataset]",
                      svm_nightly_types) {
-                         SKIP_IF(this->not_float64_friendly());
+    SKIP_IF(this->not_float64_friendly());
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
     using kernel_t = rbf::descriptor<float_t, rbf::method::dense>;
