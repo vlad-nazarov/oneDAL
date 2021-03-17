@@ -768,37 +768,6 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
 }
 
 TEMPLATE_LIST_TEST_M(svm_batch_test,
-                     "svm linear cifar 50k x 3072",
-                     "[svm][integration][batch][linear][nightly][external-dataset]",
-                     svm_nightly_types) {
-    using float_t = std::tuple_element_t<0, TestType>;
-    using method_t = std::tuple_element_t<1, TestType>;
-    using kernel_t = linear::descriptor<float_t, linear::method::dense>;
-
-    const te::dataframe train_data = GENERATE_DATAFRAME(
-        te::dataframe_builder{ "workloads/cifar/dataset/cifar_50k_train_binary.csv" });
-    const auto x_train = train_data.get_table(this->get_homogen_table_id(), range(0, -1));
-    const auto y_train = train_data.get_table(
-        this->get_homogen_table_id(),
-        range(train_data.get_column_count() - 1, train_data.get_column_count()));
-
-    const te::dataframe test_data = GENERATE_DATAFRAME(
-        te::dataframe_builder{ "workloads/cifar/dataset/cifar_10k_test_binary.csv" });
-    const table x_test = test_data.get_table(this->get_homogen_table_id(), range(0, -1));
-    const table y_test = test_data.get_table(
-        this->get_homogen_table_id(),
-        range(train_data.get_column_count() - 1, train_data.get_column_count()));
-
-    const double c = 1.0e-7;
-    auto svm_desc =
-        svm::descriptor<float_t, method_t, svm::task::classification, kernel_t>{}.set_c(c);
-
-    const double ref_accuracy = 0.9;
-
-    this->check_linear_kernel_accuracy(x_train, y_train, x_test, y_test, svm_desc, ref_accuracy);
-}
-
-TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm rbf imdb_drama 121k x 1001",
                      "[svm][integration][batch][rbf][nightly][external-dataset]",
                      svm_nightly_types) {
@@ -923,6 +892,37 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
     const double ref_accuracy = 0.8999;
 
     this->check_rbf_kernel_accuracy(x_train, y_train, x_test, y_test, svm_desc, ref_accuracy);
+}
+
+TEMPLATE_LIST_TEST_M(svm_batch_test,
+                     "svm linear cifar 50k x 3072",
+                     "[svm][integration][batch][linear][weekly][external-dataset]",
+                     svm_nightly_types) {
+    using float_t = std::tuple_element_t<0, TestType>;
+    using method_t = std::tuple_element_t<1, TestType>;
+    using kernel_t = linear::descriptor<float_t, linear::method::dense>;
+
+    const te::dataframe train_data = GENERATE_DATAFRAME(
+        te::dataframe_builder{ "workloads/cifar/dataset/cifar_50k_train_binary.csv" });
+    const auto x_train = train_data.get_table(this->get_homogen_table_id(), range(0, -1));
+    const auto y_train = train_data.get_table(
+        this->get_homogen_table_id(),
+        range(train_data.get_column_count() - 1, train_data.get_column_count()));
+
+    const te::dataframe test_data = GENERATE_DATAFRAME(
+        te::dataframe_builder{ "workloads/cifar/dataset/cifar_10k_test_binary.csv" });
+    const table x_test = test_data.get_table(this->get_homogen_table_id(), range(0, -1));
+    const table y_test = test_data.get_table(
+        this->get_homogen_table_id(),
+        range(train_data.get_column_count() - 1, train_data.get_column_count()));
+
+    const double c = 1.0e-7;
+    auto svm_desc =
+        svm::descriptor<float_t, method_t, svm::task::classification, kernel_t>{}.set_c(c);
+
+    const double ref_accuracy = 0.9;
+
+    this->check_linear_kernel_accuracy(x_train, y_train, x_test, y_test, svm_desc, ref_accuracy);
 }
 
 TEMPLATE_LIST_TEST_M(svm_batch_test,
