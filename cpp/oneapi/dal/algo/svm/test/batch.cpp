@@ -769,7 +769,7 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
 
 TEMPLATE_LIST_TEST_M(svm_batch_test,
                      "svm rbf imdb_drama 121k x 1001",
-                     "[svm][integration][batch][rbf][nightly][external-dataset]",
+                     "[svm][integration][batch][rbf][weekly][external-dataset]",
                      svm_nightly_types) {
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
