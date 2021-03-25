@@ -15,12 +15,7 @@
 *******************************************************************************/
 
 #include "oneapi/dal/algo/rbf_kernel/backend/gpu/compute_kernel.hpp"
-#include "oneapi/dal/backend/interop/common_dpc.hpp"
-#include "oneapi/dal/backend/interop/table_conversion.hpp"
-
 #include "oneapi/dal/table/row_accessor.hpp"
-
-#include <daal/src/algorithms/kernel_function/oneapi/kernel_function_rbf_kernel_oneapi.h>
 
 namespace oneapi::dal::rbf_kernel::backend {
 
@@ -29,12 +24,7 @@ using input_t = compute_input<task::compute>;
 using result_t = compute_result<task::compute>;
 using descriptor_t = detail::descriptor_base<task::compute>;
 
-namespace daal_rbf_kernel = daal::algorithms::kernel_function::rbf;
-namespace interop = dal::backend::interop;
-
-template <typename Float>
-using daal_rbf_kernel_t =
-    daal_rbf_kernel::internal::KernelImplRBFOneAPI<daal_rbf_kernel::defaultDense, Float>;
+namespace pr = dal::backend::primitives;
 
 template <typename Float>
 static result_t call_daal_kernel(const context_gpu& ctx,
@@ -42,7 +32,6 @@ static result_t call_daal_kernel(const context_gpu& ctx,
                                  const table& x,
                                  const table& y) {
     auto& queue = ctx.get_queue();
-    interop::execution_context_guard guard(queue);
 
     const int64_t row_count_x = x.get_row_count();
     const int64_t row_count_y = y.get_row_count();
@@ -68,7 +57,20 @@ static result_t call_daal_kernel(const context_gpu& ctx,
 
 template <typename Float>
 static result_t compute(const context_gpu& ctx, const descriptor_t& desc, const input_t& input) {
-    return call_daal_kernel<Float>(ctx, desc, input.get_x(), input.get_y());
+    const auto x = input.get_x();
+    const auto y = input.get_y();
+
+    auto& queue = ctx.get_queue();
+
+    const int64_t row_count_x = x.get_row_count();
+    const int64_t col_count_x = x.get_column_count();
+    const int64_t row_count_y = y.get_row_count();
+    const int64_t col_count_y = y.get_column_count();
+
+    ONEDAL_ASSERT(col_count_x == col_count_y);
+    dal::detail::check_mul_overflow(row_count_x, row_count_y);
+
+    
 }
 
 template <typename Float>
