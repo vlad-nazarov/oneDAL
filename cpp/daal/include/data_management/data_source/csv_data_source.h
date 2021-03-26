@@ -189,7 +189,6 @@ public:
         }
 
         BlockDescriptor<DAAL_DATA_TYPE> blockCurrent, block;
-        nt->getBlockOfRows(0, nrows, writeOnly, block);
         size_t pos = 0;
         int result = 0;
         for (size_t i = 0; i < tables.size(); i++)
@@ -201,16 +200,17 @@ public:
 
             ntCurrent->getBlockOfRows(0, rows, readOnly, blockCurrent);
 
-            result |= services::internal::daal_memcpy_s(&(block.getBlockPtr()[pos * ncols]), rows * ncols * sizeof(DAAL_DATA_TYPE),
+            nt->getBlockOfRows(pos, nrows, readWrite, block);
+
+            result |= services::internal::daal_memcpy_s(block.getBlockPtr(), rows * ncols * sizeof(DAAL_DATA_TYPE),
                                                         blockCurrent.getBlockPtr(), rows * ncols * sizeof(DAAL_DATA_TYPE));
 
             ntCurrent->releaseBlockOfRows(blockCurrent);
+            nt->releaseBlockOfRows(block);
 
             super::combineStatistics(ntCurrent, nt, pos == 0);
             pos += rows;
         }
-
-        nt->releaseBlockOfRows(block);
 
         if (result)
         {
