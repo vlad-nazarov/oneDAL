@@ -12,6 +12,7 @@ dal_module(
     ],
     extra_deps = [
         "@onedal//cpp/daal/src/algorithms/kernel_function:kernel",
+        "@onedal//cpp/oneapi/dal/backend/primitives",
     ]
 )
 
