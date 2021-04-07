@@ -56,6 +56,8 @@
 #include "src/algorithms/svm/oneapi/svm_train_workset_oneapi.h"
 #include "src/algorithms/svm/oneapi/svm_train_result_oneapi.h"
 
+#include <iostream>
+
 DAAL_ITTNOTIFY_DOMAIN(svm_train.default.batch);
 
 namespace daal
