@@ -269,8 +269,17 @@ private:
     }
 
     void check_if_file_exists(const std::string& path) const {
-        if (!std::fstream{ path, std::ios::in }.good()) {
-            throw std::runtime_error{ fmt::format("Cannot open file '{}'", path) };
+        if (std::fstream{ path, std::ios::in }.good()) {
+            std::cout << "All good while reading!\n";
+        }
+        if (std::fstream{ path, std::ios::in }.eof()) {
+            throw std::runtime_error{ fmt::format("EOF error '{}'", path) };
+        }
+        if (std::fstream{ path, std::ios::in }.fail()) {
+            throw std::runtime_error{ fmt::format("FAIL error '{}'", path) };
+        }
+        if (std::fstream{ path, std::ios::in }.bad()) {
+            throw std::runtime_error{ fmt::format("BAD error '{}'", path) };
         }
     }
 
