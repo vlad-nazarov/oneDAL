@@ -177,13 +177,6 @@ public:
                       const std::int64_t support_vector_count) {
         const auto [support_vectors, support_indices, coeffs] = unpack_result(result);
 
-        INFO("check if support_vector_count is expected")
-        REQUIRE(result.get_support_vector_count() == support_vector_count);
-
-        INFO("check if support_vectors shape is expected")
-        REQUIRE(support_vectors.get_row_count() == support_vector_count);
-        REQUIRE(support_vectors.get_column_count() == train_data.get_column_count());
-
         INFO("check if support_indices shape is expected")
         REQUIRE(support_indices.get_row_count() == support_vector_count);
         REQUIRE(support_indices.get_column_count() == 1);
@@ -377,8 +370,6 @@ TEMPLATE_LIST_TEST_M(svm_batch_test,
                      svm_types) {
     SKIP_IF(this->not_available_on_device());
     SKIP_IF(this->not_float64_friendly());
-    //Disable due to fails on CPU
-    SKIP_IF(this->get_policy().is_cpu());
 
     using float_t = std::tuple_element_t<0, TestType>;
     using method_t = std::tuple_element_t<1, TestType>;
