@@ -56,6 +56,8 @@
 #include "src/algorithms/svm/oneapi/svm_train_workset_oneapi.h"
 #include "src/algorithms/svm/oneapi/svm_train_result_oneapi.h"
 
+#include <iostream>
+
 DAAL_ITTNOTIFY_DOMAIN(svm_train.default.batch);
 
 namespace daal
@@ -258,6 +260,7 @@ services::Status SVMTrainOneAPI<algorithmFPType, thunder>::compute(const Numeric
         if (checkStopCondition(diff, diffPrev, eps, sameLocalDiff)) break;
         diffPrev = diff;
     }
+    std::cout << "ITER COUNT: " << iter << std::endl;
     SaveResultModel<algorithmFPType> result(alphaBuff, gradBuff, yBuff, C, nVectors);
 
     DAAL_CHECK_STATUS(status, result.init());
