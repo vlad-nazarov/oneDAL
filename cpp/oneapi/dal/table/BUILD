@@ -30,20 +30,23 @@ dal_test_suite(
 )
 
 dal_test_suite(
-    name = "row_accessor_tests",
+    name = "catch2_tests",
     srcs = [
         "test/row_accessor.cpp",
+        "test/homogen.cpp",
+        "test/common_serialization.cpp",
+        "test/homogen_serialization.cpp",
+        "detail/test/csr_accessor.cpp",
     ],
     dal_deps = [":table"],
     framework = "catch2",
 )
 
 dal_test_suite(
-    name = "interface_tests",
+    name = "gtest_tests",
     srcs = [
         "test/column_accessor.cpp",
         "test/common.cpp",
-        "test/homogen.cpp",
     ],
     dal_deps = [":table"],
 )
@@ -51,8 +54,8 @@ dal_test_suite(
 dal_test_suite(
     name = "tests",
     tests = [
-        ":interface_tests",
         ":private_tests",
-        ":row_accessor_tests",
+        ":gtest_tests",
+        ":catch2_tests",
     ],
 )

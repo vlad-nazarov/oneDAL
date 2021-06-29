@@ -16,13 +16,10 @@
 
 #pragma once
 
-#include <algorithm>
-
 #include "oneapi/dal/detail/array_impl.hpp"
-#include "oneapi/dal/detail/error_messages.hpp"
 
 namespace oneapi::dal {
-namespace v1 {
+namespace v2 {
 
 /// @tparam T The type of the memory block elements within the array.
 ///              :literal:`T` can represent any type.
@@ -31,6 +28,9 @@ namespace v1 {
 template <typename T>
 class array {
     static_assert(!std::is_const_v<T>, "array class cannot have const-qualified type of data");
+
+    friend detail::pimpl_accessor;
+    friend detail::serialization_accessor;
 
     template <typename U>
     friend class array;
@@ -194,11 +194,7 @@ public:
                          Y* data,
                          std::int64_t count,
                          const sycl::vector_class<sycl::event>& dependencies = {}) {
-        return array<T>{ detail::data_parallel_policy{ queue },
-                         data,
-                         count,
-                         dal::detail::empty_delete<const T>{},
-                         dependencies };
+        return array<T>{ queue, data, count, dal::detail::empty_delete<const T>{}, dependencies };
     }
 #endif
 
@@ -654,11 +650,7 @@ public:
     /// If no queue was provided at the array construction phase,
     /// returns empty :literal:`std::optional` object.
     std::optional<sycl::queue> get_queue() const {
-        const auto policy_opt = impl_->get_policy();
-        if (policy_opt.has_value()) {
-            return policy_opt->get_queue();
-        }
-        return std::nullopt;
+        return impl_->get_queue();
     }
 #endif
 
@@ -670,7 +662,6 @@ private:
         std::swap(a.count_, b.count_);
     }
 
-private:
     array(impl_t* impl) : impl_(impl) {
         update_data(impl_.get());
     }
@@ -702,15 +693,23 @@ private:
         count_ = 0;
     }
 
-private:
+    void serialize(detail::output_archive& ar) const {
+        impl_->serialize(ar);
+    }
+
+    void deserialize(detail::input_archive& ar) {
+        impl_->deserialize(ar);
+        update_data(impl_.get());
+    }
+
     detail::unique<impl_t> impl_;
     const T* data_ptr_;
     T* mutable_data_ptr_;
     std::int64_t count_;
 };
 
-} // namespace v1
+} // namespace v2
 
-using v1::array;
+using v2::array;
 
 } // namespace oneapi::dal
