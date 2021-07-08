@@ -17,6 +17,7 @@
 #include "oneapi/dal/algo/linear_kernel/backend/gpu/compute_kernel.hpp"
 #include "oneapi/dal/backend/primitives/blas/gemm.hpp"
 #include "oneapi/dal/backend/primitives/utils.hpp"
+#include <iostream>
 
 namespace oneapi::dal::linear_kernel::backend {
 
@@ -36,6 +37,10 @@ static result_t compute(const context_gpu& ctx, const descriptor_t& desc, const 
 
     const std::int64_t x_row_count = x.get_row_count();
     const std::int64_t y_row_count = y.get_row_count();
+
+    std::cout << "X ROW: " << row_count_x << " COL: " << x.get_column_count() 
+        << " Y ROW: " << row_count_y << " COL: " << y.get_column_count() << 
+        " SCALE " << desc.get_scale() << " SHIFT " << desc.get_shift() << std::endl;
 
     ONEDAL_ASSERT(x.get_column_count() == y.get_column_count());
     dal::detail::check_mul_overflow(x_row_count, y_row_count);

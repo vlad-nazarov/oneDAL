@@ -21,7 +21,7 @@
 #include "oneapi/dal/table/row_accessor.hpp"
 
 #include <daal/src/algorithms/kernel_function/oneapi/kernel_function_rbf_kernel_oneapi.h>
-
+#include <iostream>
 namespace oneapi::dal::rbf_kernel::backend {
 
 using dal::backend::context_gpu;
@@ -46,6 +46,10 @@ static result_t call_daal_kernel(const context_gpu& ctx,
 
     const int64_t row_count_x = x.get_row_count();
     const int64_t row_count_y = y.get_row_count();
+
+    std::cout << "X ROW: " << row_count_x << " COL: " << x.get_column_count() 
+        << " Y ROW: " << row_count_y << " COL: " << y.get_column_count() << 
+        " SIGMA " << desc.get_sigma() << std::endl;
 
     dal::detail::check_mul_overflow(row_count_x, row_count_y);
     auto arr_values =
